@@ -1,0 +1,24 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build container with Apache and Code
+      run: |
+        docker build -t my-product-image -f Dockerfile .
+
+    - name: Only deploy if pushing to master
+      if: github.ref == 'refs/heads/master'
+      run: |
+        docker run -d -p 82:80 my-product-image
